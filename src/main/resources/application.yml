@@ -1,0 +1,6 @@
+merge:
+  rootPathName: core
+  sourceExcelPath:
+  rule:
+    - (公共)->/
+    - (存款)->/
