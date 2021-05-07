@@ -170,7 +170,7 @@ public class ExtractionUtil {
 
     private static void toFile(String outPath, ArchiveEntry entry, InputStream inputStream) throws IOException {
         File outFile = new File(outPath);
-        System.out.println("outFile = " + outFile);
+//        System.out.println("outFile = " + outFile);
         if(entry.isDirectory()){
             if(!outFile.exists()){
                 outFile.mkdirs();

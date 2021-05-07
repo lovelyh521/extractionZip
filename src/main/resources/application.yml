@@ -1,6 +1,13 @@
-merge:
+core:
+  excelFileName: '2021-04-02版本(到0423) .xlsx'
   rootPathName: core
-  sourceExcelPath:
+  excelReadSheet: 2
+  coreFlag:
+    - 存款
+    - 公共
+    - 总账
+    - 贷款
+    - 产品
   rule:
     - (公共)->/
     - (存款)->/
