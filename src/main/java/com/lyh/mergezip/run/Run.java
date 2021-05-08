@@ -2,6 +2,7 @@ package com.lyh.mergezip.run;
 
 import com.lyh.mergezip.common.compress.ExtractionUtil;
 import com.lyh.mergezip.config.CoreConfig;
+import com.lyh.mergezip.core.MergeCore;
 import com.lyh.mergezip.excel.ReadCoreExcel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,6 +23,8 @@ public class Run implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        String rootpath = System.getProperty("user.dir");
+        System.out.println("当前目录：" + rootpath);
         System.out.println("请选择执行项：");
         System.out.println("1：解压核心");
         System.out.println("2：解压合并柜面");
@@ -30,10 +33,7 @@ public class Run implements CommandLineRunner {
         String str=input.next();
         switch (str){
             case "1":
-                String rootpath = System.getProperty("user.dir");
-                System.out.println("rootpath = " + rootpath);
                 File file = new File(rootpath + File.separator + source);
-                System.out.println("--------------------start----------------------");
                 System.out.println("--------------开始读取excel-------------");
                 int excelReadSheet = Integer.valueOf(coreConfig.getExcelReadSheet()) ;
                 ArrayList<String> coreFlag = coreConfig.getCoreFlag();
@@ -41,44 +41,18 @@ public class Run implements CommandLineRunner {
                 ReadCoreExcel readCoreExcel = new ReadCoreExcel(excelReadSheet,coreFlag);
                 lastFileName = readCoreExcel.getLastFileName(rootpath + File.separator + excelFileName);
                 System.out.println("--------------完成读取excel-------------");
-
-                coreZip(file,rootpath);
-                System.out.println("-------------------finish---------------------");
+                System.out.println("--------------------开始解压----------------------");
+                MergeCore mergeCore = new MergeCore(lastFileName,coreConfig.getRootPathName());
+                mergeCore.coreZip(file,rootpath);
+                System.out.println("-------------------解压完成---------------------");
                 break;
             case "2":
-                System.out.println("还没写");
+                System.out.println("暂时不能用");
                 break;
         }
     }
 
-    private void coreZip(File file, String rootpath) throws Exception {
-        ExtractionUtil unCompressUtil = new ExtractionUtil();
-        File[] files = file.listFiles();
-        /*if(files.length==0){
-            System.out.println("-------------请将要处理的文件放在当前目录下的source文件夹内--------------");
-            return;
-        }*/
 
-        for (File file1 : files) {
-            String name = file1.getName();
-            for (String s : lastFileName) {
-                if(name.indexOf(s)>=0 || file.getName().indexOf(s)>=0){
-                    System.out.println("s = " + s);
-                    if (!file1.isDirectory()) {
-                        System.out.println("name = " + name);
-                        String outPath = rootpath + File.separator + "endFile" + File.separator + coreConfig.getRootPathName();
-                        if (name.toLowerCase().endsWith(".zip")) {
-                            unCompressUtil.extractionZip(new FileInputStream(file1), outPath);
-                        }else if(name.toLowerCase().endsWith(".tar.gz")){
-                            unCompressUtil.extractionGz(new FileInputStream(file1), outPath);
-                        }
-                    }else {
-                        coreZip(file1,rootpath);
-                    }
-                }
-            }
-        }
-    }
 
 
 }
