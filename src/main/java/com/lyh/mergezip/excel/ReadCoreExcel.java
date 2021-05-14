@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +15,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ReadCoreExcel {
     private int sheetIndex;
     private ArrayList<String> coreFlag= null;
-    private Map<String, String> map = new HashMap<>();
+    private Map<String, String> map = new ConcurrentHashMap<>();
+    private Map<String, String> dbmap = new ConcurrentHashMap<>();
     public ReadCoreExcel(int sheetIndex,ArrayList<String> coreFlag) {
         this.sheetIndex = sheetIndex -1;
         this.coreFlag = coreFlag;
@@ -52,7 +55,7 @@ public class ReadCoreExcel {
     }
 
 
-    public ArrayList<String> getLastFileName(String path) throws Exception {
+    public ListBean getLastFileName(String path) throws Exception {
 
         File file = new File(path);
         if (file.isDirectory()) {
@@ -71,27 +74,63 @@ public class ReadCoreExcel {
         return null;
     }
 
-    public ArrayList<String> read(File file) throws Exception {
+    public ListBean read(File file) throws Exception {
         FileInputStream in = new FileInputStream(file); // 文件流
         ArrayList<String> fileNames = new ArrayList<>();
+        ArrayList<String> fileNamesdb = new ArrayList<>();
         Workbook workbook = getWorkbok(in,file);
         Sheet sheets = workbook.getSheetAt(sheetIndex);
         for (Row row : sheets) {
             String cell0 = row.getCell(0).getStringCellValue();
             String cell1 = row.getCell(1).getStringCellValue();
+            String cell4 = row.getCell(4) == null ? "":row.getCell(4).getStringCellValue();
             for (String s : coreFlag) {
                 if(s.equals(cell1)){
                     map.put(cell1,cell0);
+                    if(StringUtils.hasLength(cell4)){
+                        dbmap.put(cell1 + "dbFile",cell0);
+                    }
                 }
             }
         }
 
         map.forEach((k,v)->{
-            System.out.println(k+":"+v);
+            System.out.println("应用"+k+":"+v);
             fileNames.add(v);
         });
+        dbmap.forEach((k,v)->{
+            System.out.println("数据库"+k+":"+v);
+            fileNamesdb.add(v);
+        });
         map = new HashMap<>();
-        return fileNames;
+        dbmap = new ConcurrentHashMap<>();
+        return new ListBean(fileNames,fileNamesdb);
+    }
+
+    public class ListBean{
+        private ArrayList<String> fileNames;
+        private ArrayList<String> fileNamesdb;
+
+        public ListBean(ArrayList<String> fileNames, ArrayList<String> fileNamesdb) {
+            this.fileNames = fileNames;
+            this.fileNamesdb = fileNamesdb;
+        }
+
+        public ArrayList<String> getFileNames() {
+            return fileNames;
+        }
+
+        public void setFileNames(ArrayList<String> fileNames) {
+            this.fileNames = fileNames;
+        }
+
+        public ArrayList<String> getFileNamesdb() {
+            return fileNamesdb;
+        }
+
+        public void setFileNamesdb(ArrayList<String> fileNamesdb) {
+            this.fileNamesdb = fileNamesdb;
+        }
     }
 
 }

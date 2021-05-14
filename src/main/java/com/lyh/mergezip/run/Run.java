@@ -17,7 +17,7 @@ import java.util.Scanner;
 @Component
 public class Run implements CommandLineRunner {
     String source = "source";
-    ArrayList<String> lastFileName = null;
+    ReadCoreExcel.ListBean lastFileName = null;
     @Autowired
     CoreConfig coreConfig;
 
@@ -27,7 +27,7 @@ public class Run implements CommandLineRunner {
         System.out.println("当前目录：" + rootpath);
         System.out.println("请选择执行项：");
         System.out.println("1：解压核心");
-        System.out.println("2：解压合并柜面");
+//        System.out.println("2：解压合并柜面");
         Scanner input=new Scanner(System.in);
         //接受String类型
         String str=input.next();
@@ -42,8 +42,10 @@ public class Run implements CommandLineRunner {
                 lastFileName = readCoreExcel.getLastFileName(rootpath + File.separator + excelFileName);
                 System.out.println("--------------完成读取excel-------------");
                 System.out.println("--------------------开始解压----------------------");
-                MergeCore mergeCore = new MergeCore(lastFileName,coreConfig.getRootPathName());
-                mergeCore.coreZip(file,rootpath);
+                MergeCore mergeCore = new MergeCore(this.lastFileName.getFileNames(),coreConfig.getRootPathName());
+                mergeCore.coreZip(file,rootpath,"server");
+                MergeCore mergeCoredb = new MergeCore(this.lastFileName.getFileNamesdb(),coreConfig.getRootPathName());
+                mergeCoredb.coreZip(file,rootpath,"db");
                 System.out.println("-------------------解压完成---------------------");
                 break;
             case "2":

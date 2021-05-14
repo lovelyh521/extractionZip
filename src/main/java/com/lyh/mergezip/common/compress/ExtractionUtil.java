@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 public class ExtractionUtil {
     static int bufSize = 1024;
+    private File delFile;
     public void extractionGz(String archive, String outPath) throws IOException {
         File file = new File(archive);
         extractionGz(file,outPath,false);
@@ -61,7 +62,7 @@ public class ExtractionUtil {
         }
         gcis.close();
         bos.close();
-
+        delFile = file;
         InputStream inputStream = Files.newInputStream(Paths.get(finalName));
         extractionTar(inputStream, outPath);
     }
@@ -194,5 +195,10 @@ public class ExtractionUtil {
             off += index;
         }
         return content;
+    }
+
+    public void clean(){
+        if(delFile != null && delFile.exists())
+            delFile.deleteOnExit();
     }
 }

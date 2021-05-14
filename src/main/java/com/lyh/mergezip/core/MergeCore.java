@@ -17,31 +17,27 @@ public class MergeCore {
         this.lastFileName = lastFileName;
     }
 
-    public void coreZip(File file, String rootpath) throws Exception {
+    public void coreZip(File file, String rootpath,String subFileName) throws Exception {
         ExtractionUtil unCompressUtil = new ExtractionUtil();
         File[] files = file.listFiles();
-        /*if(files.length==0){
-            System.out.println("-------------请将要处理的文件放在当前目录下的source文件夹内--------------");
-            return;
-        }*/
-
         for (File file1 : files) {
             String name = file1.getName();
             for (String s : lastFileName) {
                 if(name.indexOf(s)>=0 || file.getName().indexOf(s)>=0){
                     if (!file1.isDirectory()) {
                         System.out.println("解压：" + name);
-                        String outPath = rootpath + File.separator + "endFile" + File.separator + corePath;
+                        String outPath = rootpath + File.separator + "endFile" + File.separator + corePath + "_" + subFileName;
                         if (name.toLowerCase().endsWith(".zip")) {
                             unCompressUtil.extractionZip(new FileInputStream(file1), outPath);
                         }else if(name.toLowerCase().endsWith(".tar.gz")){
                             unCompressUtil.extractionGz(new FileInputStream(file1), outPath);
                         }
                     }else {
-                        coreZip(file1,rootpath);
+                        coreZip(file1,rootpath,subFileName);
                     }
                 }
             }
         }
+        unCompressUtil.clean();
     }
 }
