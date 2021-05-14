@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 
 @Component
@@ -42,9 +43,11 @@ public class Run implements CommandLineRunner {
                 lastFileName = readCoreExcel.getLastFileName(rootpath + File.separator + excelFileName);
                 System.out.println("--------------完成读取excel-------------");
                 System.out.println("--------------------开始解压----------------------");
-                MergeCore mergeCore = new MergeCore(this.lastFileName.getFileNames(),coreConfig.getRootPathName());
+                MergeCore mergeCore = new MergeCore(this.lastFileName.getFileNames(),coreConfig.getRootPathName(),null);
                 mergeCore.coreZip(file,rootpath,"server");
-                MergeCore mergeCoredb = new MergeCore(this.lastFileName.getFileNamesdb(),coreConfig.getRootPathName());
+                HashSet<String> filter = new HashSet<>();
+                filter.add("tools-flyway");
+                MergeCore mergeCoredb = new MergeCore(this.lastFileName.getFileNamesdb(),coreConfig.getRootPathName(),filter);
                 mergeCoredb.coreZip(file,rootpath,"db");
                 System.out.println("-------------------解压完成---------------------");
                 break;
