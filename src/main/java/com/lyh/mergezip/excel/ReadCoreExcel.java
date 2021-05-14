@@ -98,6 +98,7 @@ public class ReadCoreExcel {
             System.out.println("应用"+k+":"+v);
             fileNames.add(v);
         });
+        System.out.println("------------------------------------");
         dbmap.forEach((k,v)->{
             System.out.println("数据库"+k+":"+v);
             fileNamesdb.add(v);

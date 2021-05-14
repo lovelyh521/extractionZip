@@ -26,7 +26,7 @@ public class MergeCore {
                 if(name.indexOf(s)>=0 || file.getName().indexOf(s)>=0){
                     if (!file1.isDirectory()) {
                         System.out.println("解压：" + name);
-                        String outPath = rootpath + File.separator + "endFile" + File.separator + corePath + "_" + subFileName;
+                        String outPath = rootpath + File.separator + "endFile" + File.separator + corePath + "_" + subFileName+File.separator+name.substring(0,name.indexOf("."));
                         if (name.toLowerCase().endsWith(".zip")) {
                             unCompressUtil.extractionZip(new FileInputStream(file1), outPath);
                         }else if(name.toLowerCase().endsWith(".tar.gz")){
